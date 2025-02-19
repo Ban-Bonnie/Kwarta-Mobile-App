@@ -52,6 +52,9 @@ class signup : AppCompatActivity() {
                 Log.i("System Log", "Successfully signed in as ${userName}")
                 DataManager.addUser(userName,userEmail,userPassword, 0);
 
+                val toLogin = Intent(this@signup, MainActivity::class.java);
+                startActivity(toLogin);
+                Toast.makeText(applicationContext,"Signed in Successfully", Toast.LENGTH_LONG).show();
 
             }
             else{
@@ -68,6 +71,8 @@ class signup : AppCompatActivity() {
         }
 
     }
+
+
 
     private fun validateSignupDetails(username: String, email: String, password: String, confirmPassword:String): Boolean{
 
