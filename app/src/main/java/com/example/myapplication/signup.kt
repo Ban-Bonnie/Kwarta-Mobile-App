@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -48,11 +49,13 @@ class signup : AppCompatActivity() {
 
             if(validateSignupDetails(userName, userEmail, userPassword,userConfirmPassword)){
                 //Valid user details
-                Log.i("signup attempt", "Successfully signed in as ${userName}")
+                Log.i("System Log", "Successfully signed in as ${userName}")
+                DataManager.addUser(userName,userEmail,userPassword, 0);
+
 
             }
             else{
-                Log.i("signup attempt", "user invalid signup details ")
+                Log.i("System Log", "user invalid signup details ")
             }
 
         }
@@ -67,18 +70,15 @@ class signup : AppCompatActivity() {
     }
 
     private fun validateSignupDetails(username: String, email: String, password: String, confirmPassword:String): Boolean{
-        val usernameList = intent.getStringArrayListExtra("usernames");
-        val emailList = intent.getStringArrayListExtra("emails");
-
 
         //Username
-        if ((usernameList != null)&&(usernameList.contains(username))) {
+        if ((DataManager.usernameExists(username))) {
             Toast.makeText(applicationContext,"username ${username} is already taken", Toast.LENGTH_LONG).show();
             return false; //username taken
         }
 
         //Email
-        if((emailList != null)&&(emailList.contains(email))){
+        if(DataManager.emailExists(email)){
             Toast.makeText(applicationContext,"email already taken", Toast.LENGTH_LONG).show();
             return false; //email taken
         }
