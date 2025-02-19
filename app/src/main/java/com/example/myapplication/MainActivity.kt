@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.OnBackPressedCallback
+import com.example.myapplication.DataManager
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,11 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var loginBtn: Button
     private lateinit var signupBtn: Button
 
-    val usernameList = listOf("Bonnie", "Nonoy")
-    val passwordList = listOf("bonnie123", "nonoy812")
-    val emailList = listOf("bonniegwapo@gmail.com","ihaveADHD@gmail.com");
-    val balanceList = listOf(2000,300)
-    var userIndex = 0;
+
 
 
 
@@ -30,38 +28,44 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        DataManager.addUser("Bonnie","bonniegwapo123@gmail.com","bonnie123",10000);
+        DataManager.addUser("Nonoy812","nonoy123@gmail.com","nonoy123",500);
+
+
+
+
         usernameInput = findViewById(R.id.usernameInput)
         passwordInput = findViewById(R.id.passwordInput)
         loginBtn = findViewById(R.id.login_button)
         signupBtn = findViewById(R.id.signup_button)
-        userIndex = 0;
 
 
         // Set up the login button click listener
         loginBtn.setOnClickListener {
-            val username = usernameInput.text.toString()
-            val password = passwordInput.text.toString()
+            val username = usernameInput.text.toString();
+            val password = passwordInput.text.toString();
 
-            if(verifyLogin(username, password)){
+            val account = DataManager.findUser(username,password);
+            if(account!= null){
                 //Logged in
                 val toDashboard = Intent(this@MainActivity, kwarta_dashboard::class.java)
-                toDashboard.putExtra("balance", balanceList.get(userIndex))
-                Log.i("logindetails", "user index: ${userIndex} user balance: ${balanceList.get(userIndex)}");
+                toDashboard.putExtra("username", username);
+                toDashboard.putExtra("password", password);
+                Log.i("System Log", "user ${username} logged in ");
                 startActivity(toDashboard)
 
             }
             else{
-                //login failed
+                //login Failed
+                Toast.makeText(applicationContext,"Incorrect Username or Password",Toast.LENGTH_LONG).show();
             }
         }//Login Listener
 
 
         //to Signup activity
         signupBtn.setOnClickListener{
-            val toSignup = Intent(this@MainActivity, signup::class.java)
-            toSignup.putStringArrayListExtra("usernames", ArrayList(usernameList));
-            toSignup.putStringArrayListExtra("emails", ArrayList(emailList));
-            startActivity(toSignup)
+            val toSignup = Intent(this@MainActivity, signup::class.java);
+            startActivity(toSignup);
         }
 
         //Disable back button -gpt coded
@@ -74,24 +78,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    //Authenticate user login
-    private fun verifyLogin(username: String, password: String): Boolean {
-        if (username in this.usernameList && password == this.passwordList[this.usernameList.indexOf(username)]) {
-            Log.i("Login Status", "Username found: $username and password: $password")
-
-            Toast.makeText(applicationContext,"User $username logged in successfully", Toast.LENGTH_LONG).show();
-            userIndex = this.usernameList.indexOf(username);
-            return(true);
-
-
-
-        } else {
-            Log.i("Login Status", "Not found: $username")
-            Toast.makeText(applicationContext, "Incorrect username or password",Toast.LENGTH_LONG).show();
-            return (false);
-
-        }
-    }
 
 
 
