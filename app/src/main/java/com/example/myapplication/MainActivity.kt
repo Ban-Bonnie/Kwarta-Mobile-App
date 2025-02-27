@@ -19,20 +19,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var loginBtn: Button
     private lateinit var signupBtn: Button
 
-
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        //Add accounts
         DataManager.addUser("Bonnie","bonniegwapo123@gmail.com","bonnie123",10000);
         DataManager.addUser("Nonoy812","nonoy123@gmail.com","nonoy123",500);
-
-
-
 
         usernameInput = findViewById(R.id.usernameInput)
         passwordInput = findViewById(R.id.passwordInput)
@@ -76,12 +70,6 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-    }
+    }//on create
 
-
-
-
-
-
-
-}
+}//main activity

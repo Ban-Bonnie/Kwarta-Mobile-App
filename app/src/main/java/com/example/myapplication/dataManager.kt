@@ -14,7 +14,7 @@ object DataManager {
 
     fun findUser(username: String, password: String): User? {
         var userAccount = users.find { it.username == username && it.password == password }
-        return userAccount; //return null if account not found
+        return userAccount; //returns null if account not found
     }
 
     fun addBalance(amount: Int, username: String){
@@ -44,8 +44,6 @@ object DataManager {
     fun emailExists(email: String): Boolean{
         return (users.find{it.email == email} != null)
     }
-
-
 
 
 
