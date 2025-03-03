@@ -21,16 +21,16 @@ object DataManager {
         val account = users.find{it.username == username}
         if(account!=null){
             account.balance += amount;
-            Log.i("System Log Add Balance", "Added ${amount} to user ${username} new balance is ${account.balance}")
-        }else{Log.i("System Log Add Balance", "something went wrong or user account is null")}
+            Log.i("System Log data Manager", "Added ${amount} to user ${username} new balance is ${account.balance}")
+        }else{Log.i("System Log data Manager", "something went wrong or user account is null")}
     }
 
     fun deductBalance(amount: Int, username: String){       //Note to self: make sure to verify user balance before using this func
         val account = users.find{it.username == username}
         if(account!=null){
             account.balance -= amount;
-            Log.i("System Log", "Deducted ${amount} to user ${username} new balance is ${account.balance}")
-        }else{Log.i("System Log", "something went wrong or user account is null")}
+            Log.i("System Log data Manager", "Deducted ${amount} to user ${username} new balance is ${account.balance}")
+        }else{Log.i("System Log data Manager", "something went wrong or user account is null")}
     }
 
 

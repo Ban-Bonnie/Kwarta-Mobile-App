@@ -4,11 +4,15 @@ import android.accounts.Account
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -71,30 +75,57 @@ class kwarta_dashboard : AppCompatActivity() {
         cashInButton.setOnClickListener{
             DataManager.addBalance(100,username)
             updateBalanceDisplay()
+            Log.i("System Log Dashboard", "onCreate: cash in button")
         }
 
         cashOutButton.setOnClickListener{
             DataManager.deductBalance(100,username)
             updateBalanceDisplay()
+            Log.i("System Log Dashboard", "onCreate: cash out button")
         }
 
 
 
         //logout button clicked
         logoutBtn.setOnClickListener{
-            val toLogin = Intent(this@kwarta_dashboard, MainActivity::class.java);
-            startActivity(toLogin);
+            val intent = Intent(this@kwarta_dashboard, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
+            finish()
         }
 
+
+        //Double press back button to logout
+        var backButtonPressCounter = 0
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (backButtonPressCounter > 0) {
+                    val intent = Intent(this@kwarta_dashboard, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(applicationContext, "Press again to Logout", Toast.LENGTH_SHORT).show()
+                    backButtonPressCounter++
+
+                    // Reset counter after 2 seconds
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        backButtonPressCounter = 0
+                    }, 2000)
+                }
+            }
+        })
 
 
 
     }
 
     fun updateBalanceDisplay(){
+        balance = account?.balance ?: 0
         val displayBalance = balanceIntToString(balance)
         dashboardBalance.text = displayBalance
         balance = account?.balance ?: 0
+        Log.i("System Log Dashboard", "updateBalanceDisplay: $balance")
 
     }
 
