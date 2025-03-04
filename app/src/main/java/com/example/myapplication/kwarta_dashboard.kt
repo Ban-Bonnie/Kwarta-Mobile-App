@@ -19,6 +19,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import java.text.NumberFormat
 import java.util.Locale
+import android.app.AlertDialog
+import android.content.Context
+import android.widget.EditText
+import android.widget.LinearLayout
 
 class kwarta_dashboard : AppCompatActivity() {
 
@@ -73,25 +77,20 @@ class kwarta_dashboard : AppCompatActivity() {
 
         //cash in button
         cashInButton.setOnClickListener{
-            DataManager.addBalance(100,username)
-            updateBalanceDisplay()
-            Log.i("System Log Dashboard", "onCreate: cash in button")
+            showCashInDialog(this)
         }
 
         cashOutButton.setOnClickListener{
-            DataManager.deductBalance(100,username)
-            updateBalanceDisplay()
-            Log.i("System Log Dashboard", "onCreate: cash out button")
+           showCashOutDialog(this)
         }
 
 
 
         //logout button clicked
         logoutBtn.setOnClickListener{
-            val intent = Intent(this@kwarta_dashboard, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            startActivity(intent)
-            finish()
+            showLogoutConfirmationDialog(this)
+
+
         }
 
 
@@ -135,6 +134,110 @@ class kwarta_dashboard : AppCompatActivity() {
             maximumFractionDigits = 2
         }
         return formatter.format(balance.toDouble())
+    }
+
+    fun showCashInDialog(context: Context) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Cash In Amount")
+
+        // Create an EditText for user input
+        val input = EditText(context)
+        input.hint = "Enter amount"
+        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+
+        // Set layout parameters for better spacing
+        val layout = LinearLayout(context)
+        layout.orientation = LinearLayout.VERTICAL
+        layout.setPadding(50, 20, 50, 20)
+        layout.addView(input)
+
+        builder.setView(layout)
+
+        // Handle user actions
+        builder.setPositiveButton("OK") { dialog, _ ->
+            val amount = input.text.toString()
+            if (amount.isNotEmpty()) {
+                Toast.makeText(context, "successfully cashed in $$amount", Toast.LENGTH_SHORT).show()
+                DataManager.addBalance(amount.toInt(),username)
+                updateBalanceDisplay()
+                Log.i("System Log Dashboard", "onCreate: cash in button")
+
+            } else {
+                Toast.makeText(context, "Please enter an amount!", Toast.LENGTH_SHORT).show()
+            }
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        // Show the dialog
+        builder.show()
+    }
+    fun showCashOutDialog(context: Context) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Cash Out Amount")
+
+        // Create an EditText for user input
+        val input = EditText(context)
+        input.hint = "Enter amount"
+        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+
+        // Set layout parameters for better spacing
+        val layout = LinearLayout(context)
+        layout.orientation = LinearLayout.VERTICAL
+        layout.setPadding(50, 20, 50, 20)
+        layout.addView(input)
+
+        builder.setView(layout)
+
+        // Handle user actions
+        builder.setPositiveButton("OK") { dialog, _ ->
+            val amount = input.text.toString()
+            if (amount.toInt()> account!!.balance){
+                Toast.makeText(context, "Not enough balance", Toast.LENGTH_SHORT).show()
+            }
+            else if (amount.isNotEmpty()) {
+
+                Toast.makeText(context, "successfully cashed out $$amount", Toast.LENGTH_SHORT).show()
+                DataManager.deductBalance(amount.toInt(),username)
+                updateBalanceDisplay()
+                Log.i("System Log Dashboard", "onCreate: cash out button")
+
+            } else {
+                Toast.makeText(context, "Please enter an amount!", Toast.LENGTH_SHORT).show()
+            }
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        // Show the dialog
+        builder.show()
+    }
+
+    fun showLogoutConfirmationDialog(context: Context) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Logout")
+        builder.setMessage("Are you sure you want to log out?")
+
+        builder.setPositiveButton("Yes") { dialog, _ ->
+            val intent = Intent(this@kwarta_dashboard, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
+            finish()
+
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
     }
 
 
