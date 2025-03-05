@@ -3,7 +3,7 @@ import android.util.Log
 
 object DataManager {
     data class User(val username: String, val email:String ,val password: String, var balance: Int)
-    val users = mutableListOf<User>()
+    private val users = mutableListOf<User>()
 
     //MAIN FUNCTIONS
     fun addUser(username: String, email:String, password: String, balance: Int){
